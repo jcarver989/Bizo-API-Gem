@@ -1,0 +1,13 @@
+A Simple Ruby Wrapper around the Bizo API (http://developer.bizo.com/")
+
+Example Usage:
+
+require 'rubygems'
+require 'bizo'
+
+client = Bizo::Client.new "YOUR_API_KEY", "YOUR_API_SECRET_KEY"
+bizographics = client.classify :title => "accountant", :email => "accountingdude@somecompany.com"
+
+client.taxonomy 
+
+... etc
