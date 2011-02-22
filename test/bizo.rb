@@ -5,7 +5,7 @@ require 'shoulda'
 require 'test/unit'
 
 
-class Test::Unit::TestCase
+class ClientTest < Test::Unit::TestCase
   context "an api client" do
     setup do
       FakeWeb.allow_net_connect = false
