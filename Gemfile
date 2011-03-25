@@ -1,7 +1,10 @@
 source :rubygems
 gem "oauth"
-gem "fakeweb"
 gem "json"
-gem "shoulda"
-gem "mocha"
+
+group :test do 
+  gem "fakeweb"
+  gem "shoulda"
+  gem "mocha"
+end
 

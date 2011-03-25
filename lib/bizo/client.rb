@@ -21,21 +21,29 @@ module Bizo
     end
 
     def taxonomy(opts = {})
-      taxonomy     = request :get, TAXONOMY_PATH
-      bizographics = taxonomy["taxonomy"]["bizographics"]
-      bizographics.select! { |key, value| opts[:exclude].include?(key.to_sym) } unless opts[:exclude].nil? || opts[:exclude].empty?
-      return bizographics unless opts[:top_level] == true
+      taxonomy      = request :get, TAXONOMY_PATH
+      bizographics  = taxonomy["taxonomy"]["bizographics"]
 
-      bizographics.inject({}) do |filtered, pair|
-        category, segments = pair 
-
-        segments.each do |segment|
-          filtered[key] ||= []
-          filtered[key] << segment if segment["parent_code"].nil?
+      unless opts[:exclude].nil? || opts[:exclude].empty?
+        bizographics = bizographics.inject({}) do |filtered, pair| 
+          category, segments = pair
+          filtered[category] = segments unless opts[:exclude].include?(category.to_sym)
+          filtered
         end
-
-        filtered
       end
+
+      if opts[:top_level] == true
+        bizographics = bizographics.inject({}) do |filtered, pair|
+          category, segments = pair 
+          segments.each do |segment|
+            filtered[category] ||= []
+            filtered[category] << segment if segment["parent_code"].nil?
+          end
+          filtered
+        end
+      end
+
+      bizographics
     end
 
   

@@ -1,7 +1,10 @@
 require File.expand_path '../../lib/bizo', __FILE__
 require 'rubygems'
+require 'bundler'
+Bundler.setup(:default, :test)
 require 'fakeweb'
 require 'shoulda'
+require 'mocha'
 require 'test/unit'
 
 
@@ -64,6 +67,51 @@ class ClientTest < Test::Unit::TestCase
       should "contain oauth params" do
         assert contains_oauth_params(@path)
       end
+
+      context "a taxonomy" do
+        setup do
+          @taxonomy = {
+            "taxonomy" => {
+              "bizographics" => {
+                "industry" => [
+                  { "name" => "foo", "code" => "foo", "parent_code" => "foo_daddy" },
+                  { "name" => "foo2", "code" => "foo2", "parent_code" => "foo_daddy2" },
+                  { "name" => "foo3", "code" => "foo3" }
+                ],
+
+                "company_size" => [
+                  { "name" => "large", "code" => "large" }
+                ]
+              }
+            }
+          }
+          @client.stubs(:request).returns(@taxonomy)
+        end 
+
+        should "exclude unwanted categories" do
+          result = @client.taxonomy :exclude => [:industry]
+          assert_equal result, { "company_size" => [{"name" => "large", "code" => "large" }]}
+        end
+
+        should "exclude all unwanted categories" do
+          result = @client.taxonomy :exclude => [:industry, :company_size]
+          assert_equal result, {}
+        end
+
+        should "filter only top level" do
+          result = @client.taxonomy :top_level => true
+          assert_equal(result, {
+            "industry" => [{ "name" => "foo3", "code" => "foo3" }],
+            "company_size" => [{ "name" => "large", "code" => "large" }]
+          })
+        end
+
+        should "filter top level and unwanted categories" do 
+          result = @client.taxonomy :top_level => true, :exclude => [:company_size]
+          assert_equal result, { "industry" => [{"name" => "foo3", "code" => "foo3"}]}
+        end
+
+      end
     end
 
 
@@ -87,7 +135,7 @@ class ClientTest < Test::Unit::TestCase
   private 
 
   def contains_oauth_params(path)
-    path.include?("&oauth_consumer_key=key&oauth_signature_method=HMAC-SHA1")
+    path.include?("&oauth_consumer_key=key") && path.include?("&oauth_signature_method=HMAC-SHA1")
   end
 
   def send
