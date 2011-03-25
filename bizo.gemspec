@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name ="Bizo"
-  spec.version = "0.0.3"
+  spec.version = "0.0.4"
   spec.summary = "A simple wrapper around the Bizo API"
   spec.authors = ["Joshua Carver"]
   spec.email = "josh@bizo.com"

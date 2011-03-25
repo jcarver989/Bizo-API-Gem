@@ -20,6 +20,10 @@ module Bizo
       request :get, ACCOUNT_PATH
     end
 
+    def write(params = {})
+      request :get, WRITE_PATH, params
+    end
+
     def taxonomy(opts = {})
       taxonomy      = request :get, TAXONOMY_PATH
       bizographics  = taxonomy["taxonomy"]["bizographics"]
@@ -52,5 +56,6 @@ module Bizo
     ACCOUNT_PATH  = "/v1/account.json"
     PROFILE_PATH  = "/v1/profile.json"
     CLASSIFY_PATH = "/v1/classify.json"
+    WRITE_PATH    = "/v1/writeData.json"
   end
 end
