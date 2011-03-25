@@ -20,10 +20,25 @@ module Bizo
       request :get, ACCOUNT_PATH
     end
 
-    def taxonomy
-      request :get, TAXONOMY_PATH
+    def taxonomy(opts = {})
+      taxonomy     = request :get, TAXONOMY_PATH
+      bizographics = taxonomy["taxonomy"]["bizographics"]
+      bizographics.select! { |key, value| opts[:exclude].include?(key.to_sym) } unless opts[:exclude].nil? || opts[:exclude].empty?
+      return bizographics unless opts[:top_level] == true
+
+      bizographics.inject({}) do |filtered, pair|
+        category, segments = pair 
+
+        segments.each do |segment|
+          filtered[key] ||= []
+          filtered[key] << segment if segment["parent_code"].nil?
+        end
+
+        filtered
+      end
     end
 
+  
     private
     TAXONOMY_PATH = "/v1/taxonomy.json"
     ACCOUNT_PATH  = "/v1/account.json"
