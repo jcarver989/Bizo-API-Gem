@@ -11,3 +11,9 @@ bizographics = client.classify :title => "accountant", :email => "accountingdude
 client.taxonomy 
 
 ... etc
+
+## License
+
+Licensed under the terms of the Apache Software License v2.0. 
+
+http://www.apache.org/licenses/LICENSE-2.0.html
